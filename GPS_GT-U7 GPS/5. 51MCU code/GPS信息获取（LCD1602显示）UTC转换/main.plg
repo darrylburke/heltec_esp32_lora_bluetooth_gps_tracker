@@ -1,0 +1,17 @@
+<html>
+<body>
+<pre>
+<h1>礦ision Build Log</h1>
+<h2>Project:</h2>
+C:\Users\XiaoBai\Desktop\UBLOX-6M GPS资料包\5.51单片机例程\GPS信息获取（LCD1602显示）UTC转换\main.uvproj
+Project File Date:  03/23/2014
+
+<h2>Output:</h2>
+Build target 'Target 1'
+compiling main.c...
+compiling GPS.c...
+compiling LCD1602.c...
+linking...
+Program Size: data=107.5 xdata=136 code=1570
+creating hex file from "main"...
+"main" - 0 Error(s), 0 Warning(s).

@@ -1,0 +1,5 @@
+"main.obj",
+"LCD12864.obj",
+"GPS.obj" 
+TO "main" 
+RAMSIZE(256) 

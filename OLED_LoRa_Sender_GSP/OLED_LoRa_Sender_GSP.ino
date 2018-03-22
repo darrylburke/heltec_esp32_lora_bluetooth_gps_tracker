@@ -52,10 +52,61 @@ void logo()
   display.display();
 }
 
+
+
+void cbk(int packetSize) {
+
+   display.clear();
+    display.drawString(0, 0, "Lora CALLBACK");
+  
+  
+
+  
+      
+  packSize = String(packetSize,DEC);
+  byte packets[packetSize];
+ 
+  for (int i = 0; i < packetSize; i++) { packets[i] = (byte) LoRa.read(); }  
+  if (packetSize == 3 ){
+  byte deviceid = packets[0];
+  byte command = packet[1];
+  byte len = packet[2];
+
+  display.drawString(0,20,bytestoString(packets,packetSize));
+  display.display();
+
+    if (deviceid == LORAID) {
+      
+     for (int x=0;x<10;x++) {
+       digitalWrite(25, HIGH);   // turn the LED on (HIGH is the voltage level)
+       delay (100);
+       digitalWrite(25, LOW);    // turn the LED off by making the voltage LOW
+       delay(50);
+      }
+    }
+     
+     
+  }
+ 
+}
+void cbkCallback(){
+    for (int x=0;x<4;x++) {
+       digitalWrite(25, HIGH);   // turn the LED on (HIGH is the voltage level)
+       delay (100);
+       digitalWrite(25, LOW);    // turn the LED off by making the voltage LOW
+       delay(50);
+      }
+   int packetSize = LoRa.parsePacket();
+   if (packetSize) { cbk(packetSize);}
+}
+
+
 void setup()
 {
   pinMode(16,OUTPUT);
   pinMode(25,OUTPUT);
+  pinMode(26, INPUT);
+  attachInterrupt(digitalPinToInterrupt(26), cbkCallback, CHANGE);
   
   digitalWrite(16, LOW);    // set GPIO16 low to reset OLED
   delay(50); 
@@ -70,17 +121,23 @@ void setup()
   
   SPI.begin(SCK,MISO,MOSI,SS);
   LoRa.setPins(SS,RST,DI00);
+
+  //Lora.setTxPower
   
   if (!LoRa.begin(BAND,PABOOST))
   {
+    display.clear();
     display.drawString(0, 0, "Starting LoRa failed!");
     display.display();
     while (1);
   }
+  display.clear();
   display.drawString(0, 0, "LoRa Initial success!");
   display.display();
   delay(1000);
   initGPS();
+  // LoRa.onReceive(cbk);
+   LoRa.receive();
 }
 
 String bytestoString(byte *array,int len) {
@@ -143,5 +200,13 @@ for (int x=0;x<4;x++){
   delay(500);                       // wait for a second
   digitalWrite(25, LOW);    // turn the LED off by making the voltage LOW
   delay(1000);                       // wait for a second
-  delay(5000);
+  
+  for (int x=0;x<80;x++){
+     int packetSize = LoRa.parsePacket();
+    if (packetSize) { cbk(packetSize);  }
+     delay (100);
+  
+  }
+  
+  
 }

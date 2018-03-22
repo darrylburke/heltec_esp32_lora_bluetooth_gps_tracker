@@ -119,9 +119,28 @@ void drawCompass(float distance, float bearing){
  //display.display();
  
 }
+void sendbuzzer() {
+
+      for (int x=0;x<10;x++) {
+       digitalWrite(25, HIGH);   // turn the LED on (HIGH is the voltage level)
+       delay (100);
+       digitalWrite(25, LOW);    // turn the LED off by making the voltage LOW
+       delay(50);
+      }
+      
+
+  LoRa.beginPacket();
+  //LoRa.print(outputLat);
+  byte msg[] = {1,1,5};
+  LoRa.write(msg,3);
+  //LoRa.print(counter);
+  LoRa.endPacket();
+  delay(1000);
   
+}
 void cbk(int packetSize) {
-  //packet ="";
+  //packet =""
+  packetcounter++;
   packSize = String(packetSize,DEC);
   byte packets[packetSize];
   digitalWrite(25, HIGH);   // turn the LED on (HIGH is the voltage level)
@@ -228,12 +247,16 @@ String outputLat = "Lat: ";
   prevLatLon[2] = currentLatLon[2];
   lasttime = curtime;
  digitalWrite(25, LOW);    // turn the LED off by making the voltage LOW
+ if (packetcounter > 2) {
+  packetcounter=0;
+  sendbuzzer();
+ }
 }
 
 
 void setup() {
     pinMode(25,OUTPUT);
-    
+   
   setupBLE();
   pinMode(16,OUTPUT);
   digitalWrite(16, LOW);    // set GPIO16 low to reset OLED
@@ -266,6 +289,8 @@ void setup() {
   delay(1000);
  // LoRa.onReceive(cbk);
   LoRa.receive();
+
+  sendbuzzer();
    
 }
 
